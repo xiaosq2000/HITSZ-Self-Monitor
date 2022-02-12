@@ -70,5 +70,5 @@ else:
     driver.find_element_by_xpath(
         '/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[63]/div/div/span[1]').click()
     print('上报成功')
-    time.sleep(2)
+    time.sleep(1)
 driver.close()

@@ -18,7 +18,7 @@
 
    <img src="imgs/ChromeDriver_win32版本.png" style="zoom:50%;" />
 
-4. 将解压后的文件与`哈小深自动上报.exe`[[下载链接]]()，放入同一个文件夹中
+4. 将解压后的文件与`main.exe`[[下载链接]](https://github.com/xiaosq2000/HITSZ-Self-Monitor/releases/download/v1.0/main.exe)，放入同一个文件夹中
 
 5. `Win+R`，并输入cmd，点击确定
 
@@ -28,7 +28,7 @@
 
 ```powershell
 cd 文件夹路径
-.\哈小深自动上报.exe -i 您的学号 -p 您的密码
+.\main.exe -i 您的学号 -p 您的密码
 ```
 
 ![](imgs/示例.png)
