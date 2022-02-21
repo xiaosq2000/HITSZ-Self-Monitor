@@ -1,3 +1,7 @@
-main.exe
-chromedriver.exe
-dailyReport.bat
+__pycache__
+build
+dist
+哈小深自动上报.exe.spec
+哈小深自动上报.exe
+drivers
+drivers.json
