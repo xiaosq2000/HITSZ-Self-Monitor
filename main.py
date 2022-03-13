@@ -2,6 +2,7 @@
 # TODO 1. Exceptions
 # TODO 2. Silent webdriver
 # TODO 3. Proxy
+import os
 import time
 import json
 import logging
@@ -19,8 +20,11 @@ options = Options()
 options.headless = config["settings"]["headless"]
 options.add_argument("--log-level=3")
 options.add_argument("--start-maximized")
+
+os.makedirs('log', exist_ok = True)
 logging.basicConfig(filename='log/'+str(date.today())+'.log', format='%(asctime)s %(levelname)s:%(message)s',
                     level=logging.INFO, datefmt='%m/%d/%Y %I:%M:%S %p', encoding='utf-8')
+
 driver = webdriver.Chrome(ChromeDriverManager(
     path='./', print_first_line=False).install(), options=options)
 logging.info("打开哈小深疫情上报网页")
