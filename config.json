@@ -7,7 +7,7 @@
     },
     "settings":
     {
-        "headless": true,
+        "headless": false,
         "log_level": "INFO"
     }
 }

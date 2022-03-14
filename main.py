@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from sys import exit
 import os
 import time
 import json
@@ -14,7 +15,7 @@ with open("config.json", "r", encoding='utf-8') as config:
     config = json.load(config)
 
 os.makedirs('log', exist_ok=True)
-logging.basicConfig(filename='log/'+str(date.today())+'.log', level=logging.DEBUG,
+logging.basicConfig(filename='log/'+str(date.today())+'.log', level=logging.INFO,
                     format='%(asctime)s %(levelname)s:%(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', encoding='utf-8')
 logger = logging.getLogger(__name__)
 
@@ -47,6 +48,14 @@ try:
         by=By.XPATH, value='/html/body/div/div[2]/div/form/div/div[2]/ul/li[1]/input[2]').send_keys(config["profiles"]["password"])
     driver.find_element(
         by=By.XPATH, value='/html/body/div/div[2]/div/form/div/div[2]/ul/li[1]/span/input').click()
+except Exception as err:
+    logger.error(err)
+    logger.error(
+        '上报失败，请确认您的 json 文件内容正确。若仍有问题，可发送日志文件至 xiaosq2000@gmail.com 。')
+    driver.close()
+    exit()
+
+try:
     logger.debug("点击哈小深每日上报")
     driver.find_element(
         by=By.XPATH, value='/html/body/div[1]/div/div[2]/div/div[1]/div[1]').click()
@@ -54,6 +63,7 @@ try:
         by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[63]/div/div/span[1]').text
     if flag == '已提交':
         logger.info('您今日已上报，无需重复上报')
+        driver.close()
         exit()
     else:
         logger.debug("选择当前状态")
@@ -93,9 +103,11 @@ try:
         driver.find_element(
             by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[63]/div/div/span[1]').click()
         logger.info('上报成功')
+        driver.close()
         exit()
 except Exception as err:
     logger.error(err)
     logger.error(
-        '上报失败，请确认您的 json 文件内容正确。若仍有问题，可发送日志文件至 xiaosq2000@gmail.com 。')
+        '上报失败。哈小深每日疫情上报系统可能发生了更新。')
+    driver.close()
     exit()
