@@ -1,13 +1,13 @@
 {
     "profiles":
     {
-        "id": "您的学号",
-        "password": "您的密码",
+        "id": "180320329",
+        "password": "150509_xsq",
         "current_status": 7
     },
     "settings":
     {
-        "headless": true,
+        "headless": false,
         "log_level": "INFO"
     }
 }
