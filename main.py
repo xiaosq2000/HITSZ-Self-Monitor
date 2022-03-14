@@ -51,7 +51,7 @@ try:
 except Exception as err:
     logger.error(err)
     logger.error(
-        '上报失败，请确认您的 json 文件内容正确。若仍有问题，可发送日志文件至 xiaosq2000@gmail.com 。')
+        '登录失败，请检查您的 json 文件的内容与格式。')
     driver.close()
     exit()
 
@@ -59,13 +59,18 @@ try:
     logger.debug("点击哈小深每日上报")
     driver.find_element(
         by=By.XPATH, value='/html/body/div[1]/div/div[2]/div/div[1]/div[1]').click()
+    time.sleep(0.5)
+    driver.execute_script("window.scrollTo(0, 2500)")  # 拖动页面
+    time.sleep(0.5)
     flag = driver.find_element(
         by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[63]/div/div/span[1]').text
+
     if flag == '已提交':
-        logger.info('您今日已上报，无需重复上报')
+        logger.info('您今日已上报，无需重复上报！')
         driver.close()
         exit()
     else:
+        driver.execute_script("window.scrollTo(0, 0)")
         logger.debug("选择当前状态")
         driver.find_element(
             by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[12]/div/input').click()
@@ -77,34 +82,71 @@ try:
             action.move_to_element(picker_indicator)
             action.drag_and_drop_by_offset(picker_indicator, 0, +34)
             index -= 1
-
         while index < config["profiles"]["current_status"]:
             action.move_to_element(picker_indicator)
             action.drag_and_drop_by_offset(picker_indicator, 0, -34)
             index += 1
-
         time.sleep(1)
         action.perform()
+
         driver.find_element(
             by=By.XPATH, value='/html/body/div[3]/div[2]/div[1]/a[2]').click()
+
+        driver.execute_script("window.scrollTo(0, 500)")
         logger.debug("获取地理位置")
         driver.find_element(
             by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[17]/div[2]/div/div/span/a').click()
-        driver.execute_script("window.scrollTo(0, 1000)")  # 拖动页面
-        logger.debug("选择已接种全部剂次")
-        driver.find_element(
-            by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[53]/div/label[3]').click()
-        driver.execute_script(
-            "window.scrollTo(0, document.body.scrollHeight);")
+
+        logger.debug("选择地区风险等级")
+        if config["profiles"]["current_location_risk_level"] == 'low':
+            low_risk_button = driver.find_element(
+                by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[22]/div/label[1]')
+            action = ActionChains(driver)
+            action.click(low_risk_button)
+            action.perform()
+        else:
+            if config["profiles"]["current_location_risk_level"] == 'medium':
+                medium_risk_button = driver.find_element(
+                    by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[22]/div/label[2]')
+                action = ActionChains(driver)
+                action.click(medium_risk_button)
+                action.perform()
+            if config["profiles"]["current_location_risk_level"] == 'high':
+                high_risk_button = driver.find_element(
+                    by=By.XPATH, value='/html/body/div[3]/div[2]/div[2]/div/div/div[1]/div[22]/div/label[3]')
+                action = ActionChains(driver)
+                action.click(high_risk_button)
+                action.perform()
+            driver.execute_script("window.scrollTo(0, 1000)")
+            current_location_blank = driver.find_element(
+                by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[24]/div[2]')
+            action = ActionChains(driver)
+            action.click(current_location_blank)
+            action.send_keys(config["profiles"]["current_location_name"])
+            action.perform()
+
+        driver.execute_script("window.scrollTo(0, 2500)")
         logger.debug("勾选承诺")
         driver.find_element(
             by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[62]/label').click()
-        logger.debug("提交信息")
-        driver.find_element(
-            by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[63]/div/div/span[1]').click()
-        logger.info('上报成功')
-        driver.close()
-        exit()
+        try:
+            logger.debug("点击提交")
+            driver.find_element(
+                by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[63]/div/div/span[1]').click()
+        except Exception as err:
+            logger.error(err)
+            logger.error('提交按钮无法点击，建议人工检查是否已经上报。')
+            driver.close()
+            exit()
+        time.sleep(1)
+        if flag == '已提交':
+            logger.info('上报成功！')
+            driver.close()
+            exit()
+        else:
+            logger.info('由于不明原因，上报失败。')
+            driver.close()
+            exit()
 except Exception as err:
     logger.error(err)
     logger.error(
