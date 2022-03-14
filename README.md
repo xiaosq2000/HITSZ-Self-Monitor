@@ -1,33 +1,38 @@
 # 哈小深自动上报
 
-基于python3, selenium, chromedriver
+1. 确保您电脑的操作系统是 Windows ，并装有 Chrome 浏览器。
+2. 第一次使用前，需要修改 `config.json` 中的内容。
+典例如下：
 
-## 使用方法 (Windows)
+    ```json
+    {
+        "profiles":
+        {
+            "id": "180328888",
+            "password": "666666",
+            "current_status": 7,
+            "current_location_risk_level": "low",
+            "current_location_name": "若您处在中/高风险地区，此处内容替换为所在街道与社区名称"
+        },
+        "settings":
+        {
+            "log_level": "INFO",
+            "headless": true
+        }
+    }
+    ```
 
-1. 您的电脑上需要有 Chrome 浏览器
+    **家在低风险地区的同学，仅需要修改`id`, `password`两项即可。**
 
-2. 下载并解压 `哈小深自动上报.zip` [[蓝奏云下载链接]](https://wwp.lanzouq.com/iZJLW00evnwb)
+    `id`的内容是您的学号，含双引号
 
-3. 修改 `profiles.json` 中的内容，如
+    `password`的内容是您的密码，含双引号
 
-```json
-{
-    "id": "180328888",
-    "password": "123456",
-    "current_status": 7
-}
-```
+    `"current_status"` 的内容仅为数字，无双引号。若您在校，请将`7`修改为`1`。
 
-注意：`"current_status"` 的内容仅为数字，无双引号。若您在校，请将`7`修改为`1`。
+    若您所处地区为中风险区，`"current_location_risk_level": "medium",`
 
-- 在校（校内宿舍住） - 1
-- 在校（走读） - 2
-- 在校（校内隔离） - 3
-- 校外隔离 - 4
-- 病假 - 5
-- 事假 - 6
-- 其他 - 7
+    若您所处地区为高风险区，`"current_location_risk_level": "high",`
 
-4. 双击运行 `哈小深自动上报.exe` 即可。
-
-5. 后续可参考网上教程，将 `哈小深自动上报.exe` 设置为每日定时运行或开机启动。
+3. 随后每日双击运行 `哈小深自动上报.exe` 即可。
+可参考网上教程，将 `哈小深自动上报.exe` 设置为每日定时运行或开机启动。
