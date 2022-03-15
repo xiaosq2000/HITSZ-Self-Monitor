@@ -26,6 +26,7 @@ try:
     options = Options()
     options.headless = config["settings"]["headless"]
     options.add_argument("--start-maximized")
+    options.add_argument("--log-level=3")
     driver = webdriver.Chrome(ChromeDriverManager(
         path='./', print_first_line=False).install(), options=options)
 except Exception as err:
@@ -46,8 +47,12 @@ try:
     logger.debug("输入密码")
     driver.find_element(
         by=By.XPATH, value='/html/body/div/div[2]/div/form/div/div[2]/ul/li[1]/input[2]').send_keys(config["profiles"]["password"])
+    logger.debug("点击登录")
     driver.find_element(
         by=By.XPATH, value='/html/body/div/div[2]/div/form/div/div[2]/ul/li[1]/span/input').click()
+    logger.debug("点击哈小深每日上报")
+    driver.find_element(
+        by=By.XPATH, value='/html/body/div[1]/div/div[2]/div/div[1]/div[1]').click()
 except Exception as err:
     logger.error(err)
     logger.error(
@@ -56,12 +61,8 @@ except Exception as err:
     exit()
 
 try:
-    logger.debug("点击哈小深每日上报")
-    driver.find_element(
-        by=By.XPATH, value='/html/body/div[1]/div/div[2]/div/div[1]/div[1]').click()
-    time.sleep(0.5)
     driver.execute_script("window.scrollTo(0, 2500)")  # 拖动页面
-    time.sleep(0.5)
+    time.sleep(1)
     flag = driver.find_element(
         by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[63]/div/div/span[1]').text
 
@@ -71,7 +72,9 @@ try:
         exit()
     else:
         driver.execute_script("window.scrollTo(0, 0)")
+        time.sleep(1)
         logger.debug("选择当前状态")
+        # 滚动条
         driver.find_element(
             by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[12]/div/input').click()
         picker_indicator = driver.find_element(
@@ -88,11 +91,12 @@ try:
             index += 1
         time.sleep(1)
         action.perform()
-
+        # 确定
         driver.find_element(
             by=By.XPATH, value='/html/body/div[3]/div[2]/div[1]/a[2]').click()
 
         driver.execute_script("window.scrollTo(0, 500)")
+        time.sleep(1)
         logger.debug("获取地理位置")
         driver.find_element(
             by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[17]/div[2]/div/div/span/a').click()
@@ -118,6 +122,8 @@ try:
                 action.click(high_risk_button)
                 action.perform()
             driver.execute_script("window.scrollTo(0, 1000)")
+            time.sleep(1)
+            # 填写地址
             current_location_blank = driver.find_element(
                 by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[24]/div[2]')
             action = ActionChains(driver)
@@ -126,6 +132,7 @@ try:
             action.perform()
 
         driver.execute_script("window.scrollTo(0, 2500)")
+        time.sleep(1)
         logger.debug("勾选承诺")
         driver.find_element(
             by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[62]/label').click()
@@ -139,12 +146,14 @@ try:
             driver.close()
             exit()
         time.sleep(1)
+        flag = driver.find_element(
+            by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[63]/div/div/span[1]').text
         if flag == '已提交':
             logger.info('上报成功！')
             driver.close()
             exit()
         else:
-            logger.info('由于不明原因，上报失败。')
+            logger.error('由于不明原因，上报失败。')
             driver.close()
             exit()
 except Exception as err:
