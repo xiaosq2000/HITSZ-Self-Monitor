@@ -1,9 +1,15 @@
 {
     "profiles":
     {
-        "id": "您的学号",
-        "password": "您的密码",
+        "id": "学号",
+        "password": "密码",
         "current_status": 7,
+        "geo-location-emulation": 
+        {
+            "enable": true, 
+            "latitude": 纬度,
+            "longitude": 经度
+        },
         "current_location_risk_level": "low",
         "current_location_name": "若您处在中/高风险地区，此处内容替换为所在街道与社区名称"
     },
