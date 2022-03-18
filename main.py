@@ -25,7 +25,7 @@ if config["settings"]["log_level"] == 'DEBUG':
 try:
     options = Options()
     options.headless = config["settings"]["headless"]
-    options.add_argument("--start-maximized")
+    options.add_argument("window-size=1920,1080")
     options.add_argument("--log-level=3")
     driver = webdriver.Chrome(ChromeDriverManager(
         path='./', print_first_line=False).install(), options=options)
@@ -145,6 +145,7 @@ try:
         logger.debug("勾选承诺")
         driver.execute_script("window.scrollTo(0, 2500)")
         time.sleep(1)
+        # ? clickable
         driver.find_element(
             by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[62]/label').click()
 
@@ -161,11 +162,11 @@ try:
         time.sleep(1)
         flag = driver.find_element(
             by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[63]/div/div/span[1]').text
+        time.sleep(1)
         if flag == '已提交':
             logger.info('上报成功！')
             driver.close()
             exit()
-
         else:
             logger.error('上报失败，原因不明。')
             driver.close()
