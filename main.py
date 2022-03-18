@@ -25,7 +25,7 @@ if config["settings"]["log_level"] == 'DEBUG':
 try:
     options = Options()
     options.headless = config["settings"]["headless"]
-    options.add_argument("--start-maximized")
+    options.add_argument("window-size=1920,1080")
     options.add_argument("--log-level=3")
     driver = webdriver.Chrome(ChromeDriverManager(
         path='./', print_first_line=False).install(), options=options)
@@ -33,6 +33,19 @@ except Exception as err:
     logger.error(err)
     logger.error('无法使用 webdriver-manager，请确保您没有使用 Proxy 或 VPN 。')
     exit()
+
+if config["profiles"]["geo-location-emulation"]["enable"] == True:
+    try:
+        Map_coordinates = dict({
+            "latitude": config["profiles"]["geo-location-emulation"]["latitude"],
+            "longitude": config["profiles"]["geo-location-emulation"]["longitude"],
+            "accuracy": 100
+        })
+        driver.execute_cdp_cmd(
+            "Emulation.setGeolocationOverride", Map_coordinates)
+    except Exception as err:
+        logger.error(err)
+        logger.error('经纬度模拟失败。')
 
 try:
     logger.info("====== 哈小深自动上报 ======")
@@ -74,7 +87,6 @@ try:
         driver.execute_script("window.scrollTo(0, 0)")
         time.sleep(1)
         logger.debug("选择当前状态")
-        # 滚动条
         driver.find_element(
             by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[12]/div/input').click()
         picker_indicator = driver.find_element(
@@ -91,15 +103,15 @@ try:
             index += 1
         time.sleep(1)
         action.perform()
-        # 确定
         driver.find_element(
             by=By.XPATH, value='/html/body/div[3]/div[2]/div[1]/a[2]').click()
 
+        logger.debug("获取地理位置")
         driver.execute_script("window.scrollTo(0, 500)")
         time.sleep(1)
-        logger.debug("获取地理位置")
         driver.find_element(
             by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[17]/div[2]/div/div/span/a').click()
+        time.sleep(1)
 
         logger.debug("选择地区风险等级")
         if config["profiles"]["current_location_risk_level"] == 'low':
@@ -123,7 +135,6 @@ try:
                 action.perform()
             driver.execute_script("window.scrollTo(0, 1000)")
             time.sleep(1)
-            # 填写地址
             current_location_blank = driver.find_element(
                 by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[24]/div[2]')
             action = ActionChains(driver)
@@ -131,11 +142,13 @@ try:
             action.send_keys(config["profiles"]["current_location_name"])
             action.perform()
 
+        logger.debug("勾选承诺")
         driver.execute_script("window.scrollTo(0, 2500)")
         time.sleep(1)
-        logger.debug("勾选承诺")
+        # ? clickable
         driver.find_element(
             by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[62]/label').click()
+
         try:
             logger.debug("点击提交")
             driver.find_element(
@@ -145,20 +158,23 @@ try:
             logger.error('提交按钮无法点击，建议人工检查是否已经上报。')
             driver.close()
             exit()
+
         time.sleep(1)
         flag = driver.find_element(
             by=By.XPATH, value='/html/body/div[2]/div[2]/div[2]/div/div/div[1]/div[63]/div/div/span[1]').text
+        time.sleep(1)
         if flag == '已提交':
             logger.info('上报成功！')
             driver.close()
             exit()
         else:
-            logger.error('由于不明原因，上报失败。')
+            logger.error('上报失败，原因不明。')
             driver.close()
             exit()
+
 except Exception as err:
     logger.error(err)
     logger.error(
-        '上报失败。哈小深每日疫情上报系统可能发生了更新。')
+        '可能是定位失败导致的无法上报，建议尝试模拟定位功能，或哈小深疫情上报系统发生了更新。')
     driver.close()
     exit()
