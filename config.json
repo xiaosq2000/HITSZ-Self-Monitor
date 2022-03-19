@@ -11,7 +11,7 @@
             "longitude": 经度
         },
         "current_location_risk_level": "low",
-        "current_location_name": "若您处在中/高风险地区，此处内容替换为所在街道与社区名称"
+        "current_location_name": "若您处在中/高风险地区，此处内容替换为所在街道与社区名称，低风险地区无需修改"
     },
     "settings":
     {
