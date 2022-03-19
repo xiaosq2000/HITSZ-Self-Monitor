@@ -4,7 +4,7 @@
 
 ### 简述
 
-0. 确定是您的电脑是 Windows 系统，有 Chrome 浏览器，下载 哈小深自动上报.zip 并解压；
+0. 确定是您的电脑是 Windows 系统，有 Chrome 浏览器，下载 [哈小深自动上报.zip](https://wwp.lanzouq.com/iRgDo01phpti) 并解压；
 1. 将个人信息录入 `config.json` 配置文件中；
 2. 运行 `哈小深自动上报.exe` 即可完成当日上报。
 
